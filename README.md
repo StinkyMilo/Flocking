@@ -1,4 +1,4 @@
-(Video link)[https://youtu.be/flyhFdcvduE]
+[Video link](https://youtu.be/flyhFdcvduE)
 
 I unfortunately didn't have time to make this as pretty as I might've liked, but the three basic rules and the tweak are implemented!
 I think the single thing that fixed most of my problems was multiplying velocity by DeltaTime in the agent tick function, which slowed down the boids
