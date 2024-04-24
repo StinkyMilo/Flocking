@@ -1,9 +1,9 @@
 #include "FlockingManager.h"
 #include "Agent.h"
 
-#define AGENT_COUNT 10    
+#define AGENT_COUNT 50    
 #define RULE1_DIVIDE 100.f
-#define RULE2_DISTANCE 100.f
+#define RULE2_DISTANCE 200.f
 #define RULE3_DIVIDE 8.f
 
 void UFlockingManager::Init(UWorld* world, UStaticMeshComponent* mesh) {
@@ -18,6 +18,7 @@ void UFlockingManager::Init(UWorld* world, UStaticMeshComponent* mesh) {
 
             FVector location = FVector();
             location.X = FMath::Sin(incr * i) * 150.f;
+            location.Y = FMath::Cos(incr * (i + AGENT_COUNT / 2)) * 150.f;
             location.Z = FMath::Cos(incr * i) * 150.f;
 
             AAgent* agent = World->SpawnActor<AAgent>(location, rotation);
@@ -29,10 +30,11 @@ void UFlockingManager::Init(UWorld* world, UStaticMeshComponent* mesh) {
     initialized = true;
 }
 
-FVector UFlockingManager::rule1(AAgent * b) {
+FVector UFlockingManager::rule1(int j) {
+    AAgent* b = Agents[j];
     FVector pcj = FVector(0, 0, 0);
     for (int i = 0; i < AGENT_COUNT; i++) {
-        if (b != Agents[i]) {
+        if (i != j) {
             pcj += Agents[i]->GetActorLocation();
         }
     }
@@ -40,21 +42,23 @@ FVector UFlockingManager::rule1(AAgent * b) {
     return (pcj - b->GetActorLocation()) / RULE1_DIVIDE;
 }
 
-FVector UFlockingManager::rule2(AAgent * b) {
+FVector UFlockingManager::rule2(int j) {
+    AAgent* b = Agents[j];
     FVector c = FVector(0, 0, 0);
     for (int i = 0; i < AGENT_COUNT; i++) {
         FVector diff = b->GetActorLocation() - Agents[i]->GetActorLocation();
-        if (b != Agents[i] && diff.Size() < RULE2_DISTANCE) {
-            c -= diff;
+        if (i != j && diff.Size() < RULE2_DISTANCE) {
+            c += diff;
         }
     }
     return c;
 }
 
-FVector UFlockingManager::rule3(AAgent * b) {
+FVector UFlockingManager::rule3(int j) {
+    AAgent* b = Agents[j];
     FVector pvj = FVector(0, 0, 0);
     for (int i = 0; i < AGENT_COUNT; i++) {
-        if (b != Agents[i]) {
+        if (i != j) {
             pvj += b->Velocity;
         }
     }
@@ -64,8 +68,8 @@ FVector UFlockingManager::rule3(AAgent * b) {
 
 void UFlockingManager::Flock() {
     for (int i = 0; i < AGENT_COUNT; i++) {
-        Agents[i]->Velocity += rule1(Agents[i]);
-        Agents[i]->Velocity += rule2(Agents[i]);
-        Agents[i]->Velocity += rule3(Agents[i]);
+        Agents[i]->Velocity += rule1(i);
+        Agents[i]->Velocity += rule2(i);
+        Agents[i]->Velocity += rule3(i);
     }
 }

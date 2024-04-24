@@ -17,7 +17,7 @@ private:
 	UWorld* World;
 	bool initialized;
 	TArray<class AAgent*> Agents;
-	FVector rule1(AAgent * b);
-	FVector rule2(AAgent *  b);
-	FVector rule3(AAgent * b);
+	FVector rule1(int j);
+	FVector rule2(int j);
+	FVector rule3(int j);
 };

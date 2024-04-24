@@ -28,5 +28,5 @@ void AAgent::Tick(float DeltaTime) {
 	}
 
 	FVector loc = GetActorLocation();
-	SetActorLocation(loc + Velocity);
+	SetActorLocation(loc + Velocity*DeltaTime);
 }
